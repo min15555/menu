@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>58회 국내외성경탐구모임 · 식당 메뉴</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFAF6; --card:#FFFFFF;
+    --ink:#232A22; --ink-soft:#657061;
+    --line:#E8E7DD;
+    --green:#2F6B4F; --green-d:#245239; --green-soft:#E6F0E9;
+    --lunch:#D98A1E; --lunch-soft:#FBEDD3;
+    --dinner:#6B4E86; --dinner-soft:#EDE6F3;
+    --radius:18px; --shadow:0 8px 24px rgba(35,42,34,.08);
+    --font:"Noto Sans KR","Noto Sans Thai","Noto Sans",system-ui,-apple-system,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper); color:var(--ink); font-family:var(--font);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 18px 64px}
+
+  /* Header */
+  header.top{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:22px 4px 18px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .brand .plate{
+    width:44px;height:44px;flex:0 0 44px;border-radius:50%;
+    background:var(--green);color:#fff;display:grid;place-items:center;font-size:22px;
+    box-shadow:var(--shadow);
+  }
+  .brand h1{font-size:20px;font-weight:900;margin:0;letter-spacing:-.2px;line-height:1.25}
+  .subtitle{
+    font-size:14px;font-weight:700;color:var(--green-d);
+    background:var(--green-soft);border:1px solid #D4E6DA;
+    padding:7px 14px;border-radius:999px;white-space:nowrap;
+  }
+
+  /* Language tabs */
+  .tabs-shell{position:sticky;top:0;z-index:40;background:var(--paper);
+    padding:8px 0 10px;border-bottom:1px solid var(--line);margin:0 -18px 0;padding-left:18px;padding-right:18px}
+  .tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;display:flex;align-items:center;gap:7px;cursor:pointer;
+    border:1.5px solid var(--line);background:var(--card);color:var(--ink-soft);
+    padding:9px 15px;border-radius:999px;font-family:inherit;font-size:14.5px;font-weight:700;
+    transition:transform .12s ease, background .12s ease, color .12s ease, border-color .12s ease;
+  }
+  .tab .flag{font-size:17px;line-height:1}
+  .tab:hover{transform:translateY(-1px)}
+  .tab.active{background:var(--green);border-color:var(--green);color:#fff;box-shadow:var(--shadow)}
+
+  /* Greeting hero */
+  .greeting{
+    margin:20px 0 8px;background:linear-gradient(135deg,var(--green) 0%,var(--green-d) 100%);
+    color:#fff;border-radius:var(--radius);padding:26px 26px 24px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .greeting::after{content:"🍽️";position:absolute;right:-8px;bottom:-18px;font-size:120px;opacity:.10;transform:rotate(-12deg)}
+  .greeting .hello{font-size:30px;font-weight:900;margin:0 0 6px;letter-spacing:-.3px}
+  .greeting .msg{font-size:15.5px;font-weight:500;margin:0;max-width:640px;opacity:.96}
+
+  /* Days */
+  .days{margin-top:22px;display:flex;flex-direction:column;gap:20px}
+  .day{background:transparent}
+  .day-head{display:flex;align-items:baseline;gap:12px;margin:2px 2px 12px}
+  .day-head .date{font-size:19px;font-weight:900;color:var(--ink)}
+  .day-head .wd{font-size:14px;font-weight:700;color:var(--ink-soft);
+    background:#fff;border:1px solid var(--line);padding:3px 11px;border-radius:999px}
+  .meals{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+  .meal{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 16px 14px;display:flex;flex-direction:column;min-height:120px;
+    transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+  }
+  .meal.clickable{cursor:pointer}
+  .meal.clickable:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:#dcd9cc}
+  .meal.clickable:active{transform:translateY(-1px)}
+  .meal-head{display:flex;align-items:center;gap:9px;margin-bottom:11px;padding-bottom:11px;border-bottom:1px dashed var(--line)}
+  .m-icon{font-size:19px}
+  .m-title{font-size:15px;font-weight:900;letter-spacing:.2px}
+  .meal.lunch .meal-head{color:var(--lunch)}
+  .meal.lunch{border-top:4px solid var(--lunch)}
+  .meal.dinner .meal-head{color:var(--dinner)}
+  .meal.dinner{border-top:4px solid var(--dinner)}
+
+  ul.dishes{list-style:none;margin:0;padding:0;flex:1;display:flex;flex-direction:column;gap:7px}
+  ul.dishes li{display:flex;align-items:flex-start;gap:9px;font-size:15px;font-weight:500}
+  ul.dishes li .d-ico{font-size:16px;line-height:1.4;flex:0 0 auto}
+  ul.dishes li .d-name{color:var(--ink)}
+  .tap-hint{margin-top:12px;font-size:12.5px;font-weight:700;color:var(--ink-soft);opacity:.8;align-self:flex-end}
+  .meal.lunch .tap-hint{color:var(--lunch)}
+  .meal.dinner .tap-hint{color:var(--dinner)}
+
+  .meal.tba{background:#F7F6F1;border-style:dashed;justify-content:center;align-items:center;text-align:center}
+  .meal.tba .tba-txt{color:var(--ink-soft);font-weight:700;font-size:14px;opacity:.75}
+
+  footer.note{margin-top:30px;text-align:center;font-size:13px;color:var(--ink-soft);
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+
+  /* Modal */
+  .modal{position:fixed;inset:0;z-index:100;display:none;align-items:flex-end;justify-content:center}
+  .modal.open{display:flex}
+  .modal::before{content:"";position:absolute;inset:0;background:rgba(30,35,28,.5);backdrop-filter:blur(2px)}
+  .sheet{
+    position:relative;background:var(--paper);width:100%;max-width:620px;
+    border-radius:22px 22px 0 0;max-height:88vh;display:flex;flex-direction:column;
+    box-shadow:0 -10px 40px rgba(0,0,0,.25);animation:rise .28s cubic-bezier(.2,.8,.2,1)
+  }
+  @keyframes rise{from{transform:translateY(40px);opacity:.6}to{transform:translateY(0);opacity:1}}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:18px 20px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--paper);border-radius:22px 22px 0 0}
+  .sheet-head .st{font-size:16px;font-weight:900;color:var(--ink)}
+  .x{border:none;background:#EFEEE7;color:var(--ink);width:34px;height:34px;border-radius:50%;
+    font-size:18px;cursor:pointer;flex:0 0 34px;font-family:inherit;line-height:1}
+  .x:hover{background:#e4e2d8}
+  .sheet-body{padding:14px 18px 26px;overflow-y:auto}
+
+  .dish{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 16px;margin-bottom:12px}
+  .dish:last-child{margin-bottom:0}
+  .dish-top{display:flex;align-items:flex-start;gap:11px}
+  .dish-ico{font-size:26px;line-height:1.1;flex:0 0 auto}
+  .dish-name{font-size:17px;font-weight:900;color:var(--ink);line-height:1.3}
+  .dish-kor{font-size:12.5px;color:var(--ink-soft);font-weight:500;margin-top:1px}
+  .dish-tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}
+  .tag{font-size:12px;font-weight:700;color:var(--green-d);background:var(--green-soft);
+    border:1px solid #D4E6DA;padding:3px 9px;border-radius:999px}
+  .dish-desc{font-size:14.5px;color:var(--ink);margin:10px 0 0}
+  .dish-ing{font-size:13.5px;color:var(--ink-soft);margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
+  .ing-label{font-weight:800;color:var(--ink);margin-right:4px}
+
+  @media (max-width:640px){
+    .brand h1{font-size:17px}
+    .greeting .hello{font-size:25px}
+    .meals{grid-template-columns:1fr}
+    .subtitle{font-size:13px;padding:6px 12px}
+    .modal{align-items:flex-end}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="plate">✝️</div>
+      <h1 id="title">58회 국내외성경탐구모임</h1>
+    </div>
+    <div class="subtitle" id="subtitle">식당 메뉴 설명</div>
+  </header>
+
+  <div class="tabs-shell">
+    <div class="tabs" id="tabs"></div>
+  </div>
+
+  <section class="greeting" id="greeting">
+    <p class="hello" id="greet-hello"></p>
+    <p class="msg" id="greet-msg"></p>
+  </section>
+
+  <div class="days" id="days"></div>
+
+  <footer class="note" id="footer"></footer>
+</div>
+
+<div class="modal" id="modal">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div class="st" id="modal-title"></div>
+      <button class="x" id="modal-close" aria-label="close">✕</button>
+    </div>
+    <div class="sheet-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+/* ====== 언어 및 UI 사전 (수정하려면 여기서) ====== */
+const LANGS = ["ko","en","th","vi","fr","es"];
+
+const TAGICON = {pork:"🐖",beef:"🐄",chicken:"🐔",fish:"🐟",seafood:"🦑",egg:"🥚",dairy:"🧀",nuts:"🥜",gluten:"🌾",spicy:"🌶️",veg:"🌱"};
+
+const UI = {
+  langName:{ko:"한국어",en:"English",th:"ไทย",vi:"Tiếng Việt",fr:"Français",es:"Español"},
+  flag:{ko:"🇰🇷",en:"🇬🇧",th:"🇹🇭",vi:"🇻🇳",fr:"🇫🇷",es:"🇪🇸"},
+  title:{
+    ko:"58회 국내외성경탐구모임",
+    en:"58th International Bible Study Gathering",
+    th:"การประชุมศึกษาพระคัมภีร์ในและต่างประเทศ ครั้งที่ 58",
+    vi:"Buổi họp mặt Nghiên cứu Kinh Thánh lần thứ 58",
+    fr:"58ᵉ Rencontre d'étude biblique",
+    es:"58.º Encuentro de Estudio Bíblico"
+  },
+  subtitle:{
+    ko:"식당 메뉴 설명",
+    en:"Dining Hall Menu Guide",
+    th:"คู่มือเมนูอาหาร",
+    vi:"Hướng dẫn thực đơn",
+    fr:"Guide du menu",
+    es:"Guía del menú"
+  },
+  hello:{ko:"안녕하세요!",en:"Hello!",th:"สวัสดีค่ะ/ครับ!",vi:"Xin chào!",fr:"Bonjour !",es:"¡Hola!"},
+  greeting:{
+    ko:"58회 국내외성경탐구모임에 오신 것을 환영합니다. 맛있게 드세요! 😊",
+    en:"Welcome to the 58th Bible Study Gathering. Enjoy your meal! 😊",
+    th:"ยินดีต้อนรับสู่การประชุมศึกษาพระคัมภีร์ครั้งที่ 58 ทานให้อร่อยนะคะ/ครับ 😊",
+    vi:"Chào mừng đến buổi họp mặt Nghiên cứu Kinh Thánh lần thứ 58. Chúc bạn ngon miệng! 😊",
+    fr:"Bienvenue à la 58ᵉ rencontre d'étude biblique. Bon appétit ! 😊",
+    es:"Bienvenido al 58.º encuentro de estudio bíblico. ¡Buen provecho! 😊"
+  },
+  lunch:{ko:"점심",en:"Lunch",th:"อาหารกลางวัน",vi:"Bữa trưa",fr:"Déjeuner",es:"Almuerzo"},
+  dinner:{ko:"저녁",en:"Dinner",th:"อาหารเย็น",vi:"Bữa tối",fr:"Dîner",es:"Cena"},
+  tapHint:{ko:"눌러서 상세 보기",en:"Tap for details",th:"แตะเพื่อดูรายละเอียด",vi:"Chạm để xem chi tiết",fr:"Appuyez pour les détails",es:"Toca para ver detalles"},
+  ingredients:{ko:"재료",en:"Ingredients",th:"ส่วนประกอบ",vi:"Nguyên liệu",fr:"Ingrédients",es:"Ingredientes"},
+  tba:{ko:"메뉴 준비 중",en:"To be announced",th:"จะแจ้งให้ทราบ",vi:"Sẽ thông báo sau",fr:"À venir",es:"Por anunciar"},
+  footer:{
+    ko:"※ 재료는 조리 상황에 따라 달라질 수 있습니다. 알레르기가 있으면 봉사자에게 문의하세요.",
+    en:"※ Ingredients may vary. If you have any allergies, please ask a volunteer.",
+    th:"※ ส่วนประกอบอาจเปลี่ยนแปลงได้ หากมีอาการแพ้ กรุณาสอบถามอาสาสมัคร",
+    vi:"※ Nguyên liệu có thể thay đổi. Nếu bạn bị dị ứng, vui lòng hỏi tình nguyện viên.",
+    fr:"※ Les ingrédients peuvent varier. En cas d'allergie, demandez à un bénévole.",
+    es:"※ Los ingredientes pueden variar. Si tiene alergias, consulte a un voluntario."
+  },
+  weekday:{
+    sat:{ko:"토요일",en:"Saturday",th:"วันเสาร์",vi:"Thứ Bảy",fr:"Samedi",es:"Sábado"},
+    sun:{ko:"일요일",en:"Sunday",th:"วันอาทิตย์",vi:"Chủ Nhật",fr:"Dimanche",es:"Domingo"},
+    mon:{ko:"월요일",en:"Monday",th:"วันจันทร์",vi:"Thứ Hai",fr:"Lundi",es:"Lunes"},
+    tue:{ko:"화요일",en:"Tuesday",th:"วันอังคาร",vi:"Thứ Ba",fr:"Mardi",es:"Martes"},
+    wed:{ko:"수요일",en:"Wednesday",th:"วันพุธ",vi:"Thứ Tư",fr:"Mercredi",es:"Miércoles"},
+    thu:{ko:"목요일",en:"Thursday",th:"วันพฤหัสบดี",vi:"Thứ Năm",fr:"Jeudi",es:"Jueves"}
+  },
+  tags:{
+    pork:{ko:"돼지고기",en:"Pork",th:"หมู",vi:"Thịt heo",fr:"Porc",es:"Cerdo"},
+    beef:{ko:"소고기",en:"Beef",th:"เนื้อวัว",vi:"Thịt bò",fr:"Bœuf",es:"Ternera"},
+    chicken:{ko:"닭고기",en:"Chicken",th:"ไก่",vi:"Thịt gà",fr:"Poulet",es:"Pollo"},
+    fish:{ko:"생선",en:"Fish",th:"ปลา",vi:"Cá",fr:"Poisson",es:"Pescado"},
+    seafood:{ko:"해산물",en:"Seafood",th:"อาหารทะเล",vi:"Hải sản",fr:"Fruits de mer",es:"Marisco"},
+    egg:{ko:"계란",en:"Egg",th:"ไข่",vi:"Trứng",fr:"Œuf",es:"Huevo"},
+    dairy:{ko:"유제품",en:"Dairy",th:"นม",vi:"Sữa",fr:"Produits laitiers",es:"Lácteos"},
+    nuts:{ko:"견과류",en:"Nuts",th:"ถั่ว",vi:"Hạt",fr:"Fruits à coque",es:"Frutos secos"},
+    gluten:{ko:"글루텐",en:"Gluten",th:"กลูเตน",vi:"Gluten",fr:"Gluten",es:"Gluten"},
+    spicy:{ko:"매움",en:"Spicy",th:"เผ็ด",vi:"Cay",fr:"Épicé",es:"Picante"},
+    veg:{ko:"채식",en:"Vegetarian",th:"มังสวิรัติ",vi:"Chay",fr:"Végétarien",es:"Vegetariano"}
+  }
+};
+/* ====== 요리 데이터 (이름/설명/재료/태그) ====== */
+const DISH = {
+mul_kimchi:{icon:"🥬",tags:["veg"],t:{
+ ko:{n:"배추무물김치",d:"국물이 시원한 순한 물김치.",i:"배추, 무, 마늘, 생강, 고운 고춧가루, 소금"},
+ en:{n:"Water Kimchi",d:"Mild, non-spicy cabbage & radish kimchi in a cool, refreshing brine.",i:"Napa cabbage, radish, garlic, ginger, mild chili, salt"},
+ th:{n:"กิมจิน้ำ",d:"กิมจิน้ำรสอ่อน ไม่เผ็ด เย็นชื่นใจ",i:"ผักกาดขาว, หัวไชเท้า, กระเทียม, ขิง, พริกป่นอ่อน, เกลือ"},
+ vi:{n:"Kim chi nước",d:"Kim chi thanh mát, ít cay, ăn kèm nước dưa.",i:"Cải thảo, củ cải, tỏi, gừng, ớt bột nhẹ, muối"},
+ fr:{n:"Kimchi à l'eau",d:"Chou et radis fermentés, doux, dans une saumure fraîche.",i:"Chou chinois, radis, ail, gingembre, piment doux, sel"},
+ es:{n:"Kimchi en agua",d:"Col y rábano fermentados, suaves, en salmuera refrescante.",i:"Col china, rábano, ajo, jengibre, chile suave, sal"}}},
+ohyang_jangyuk:{icon:"🍖",tags:["pork"],t:{
+ ko:{n:"오향장육 & 양배추",d:"오향 향신료에 삶은 편육을 소스와 양배추에 곁들임.",i:"돼지고기, 오향(팔각·계피 등), 간장, 양배추, 특제소스"},
+ en:{n:"Five-Spice Braised Pork",d:"Sliced pork simmered in aromatic five-spice, served with cabbage & sauce.",i:"Pork, five-spice (star anise, cinnamon…), soy sauce, cabbage, dipping sauce"},
+ th:{n:"หมูตุ๋นห้าเครื่องเทศ",d:"หมูสไลซ์ตุ๋นเครื่องเทศหอม เสิร์ฟกับกะหล่ำและซอส",i:"หมู, เครื่องเทศห้าอย่าง (โป๊ยกั๊ก อบเชย ฯลฯ), ซีอิ๊ว, กะหล่ำปลี, ซอส"},
+ vi:{n:"Thịt heo ngũ vị",d:"Thịt heo thái lát hầm ngũ vị thơm, ăn kèm bắp cải và nước chấm.",i:"Thịt heo, ngũ vị (hồi, quế…), nước tương, bắp cải, nước chấm"},
+ fr:{n:"Porc braisé aux cinq épices",d:"Porc en tranches mijoté aux cinq épices, servi avec chou et sauce.",i:"Porc, cinq-épices (anis étoilé, cannelle…), sauce soja, chou, sauce"},
+ es:{n:"Cerdo a las cinco especias",d:"Cerdo en lonchas cocido con cinco especias, con col y salsa.",i:"Cerdo, cinco especias (anís, canela…), salsa de soja, col, salsa"}}},
+gochu_ssamjang:{icon:"🌶️",tags:["veg","spicy"],t:{
+ ko:{n:"풋고추 & 쌈장",d:"생 풋고추를 짭짤한 쌈장에 찍어 먹는 반찬.",i:"풋고추, 된장, 고추장, 참기름, 마늘"},
+ en:{n:"Green Chili & Ssamjang",d:"Fresh green chilies dipped in savory soybean-chili paste.",i:"Green chili, doenjang (soybean paste), gochujang, sesame oil, garlic"},
+ th:{n:"พริกสดกับซัมจัง",d:"พริกเขียวสดจิ้มเต้าเจี้ยวผสมพริกรสเข้ม",i:"พริกเขียว, เต้าเจี้ยว, พริกเกาหลี, น้ำมันงา, กระเทียม"},
+ vi:{n:"Ớt xanh & tương chấm",d:"Ớt xanh tươi chấm tương đậu cay mặn.",i:"Ớt xanh, tương đậu (doenjang), tương ớt, dầu mè, tỏi"},
+ fr:{n:"Piment vert & ssamjang",d:"Piments verts frais à tremper dans une pâte de soja pimentée.",i:"Piment vert, pâte de soja, gochujang, huile de sésame, ail"},
+ es:{n:"Chile verde & ssamjang",d:"Chiles verdes frescos para mojar en pasta de soja picante.",i:"Chile verde, pasta de soja, gochujang, aceite de sésamo, ajo"}}},
+oimuchim_gim:{icon:"🥒",tags:["veg","spicy"],t:{
+ ko:{n:"오이무침 & 구이김",d:"새콤달콤 매콤하게 무친 오이, 아이용 구이김 곁들임.",i:"오이, 고춧가루, 식초, 설탕, 마늘, 구이김"},
+ en:{n:"Seasoned Cucumber & Seaweed",d:"Sweet-and-spicy cucumber salad with roasted seaweed (kid-friendly option).",i:"Cucumber, chili flakes, vinegar, sugar, garlic, roasted seaweed"},
+ th:{n:"แตงกวายำ & สาหร่ายย่าง",d:"แตงกวายำเปรี้ยวหวานเผ็ด เสิร์ฟกับสาหร่ายย่าง (เหมาะสำหรับเด็ก)",i:"แตงกวา, พริกป่น, น้ำส้ม, น้ำตาล, กระเทียม, สาหร่ายย่าง"},
+ vi:{n:"Dưa leo trộn & rong biển",d:"Dưa leo trộn chua ngọt cay, kèm rong biển nướng (hợp cho trẻ em).",i:"Dưa leo, ớt bột, giấm, đường, tỏi, rong biển nướng"},
+ fr:{n:"Concombre assaisonné & algue",d:"Salade de concombre aigre-douce épicée avec algue grillée (option enfants).",i:"Concombre, piment, vinaigre, sucre, ail, algue grillée"},
+ es:{n:"Pepino aliñado & alga",d:"Ensalada de pepino agridulce y picante con alga tostada (apto para niños).",i:"Pepino, chile, vinagre, azúcar, ajo, alga tostada"}}},
+gim:{icon:"🍙",tags:["veg"],t:{
+ ko:{n:"구이김",d:"참기름과 소금으로 구운 바삭한 김.",i:"김, 참기름(들기름), 소금"},
+ en:{n:"Roasted Seaweed (Gim)",d:"Crispy dried seaweed sheets roasted with sesame oil and salt.",i:"Dried seaweed, sesame/perilla oil, salt"},
+ th:{n:"สาหร่ายย่าง (คิม)",d:"แผ่นสาหร่ายกรอบย่างกับน้ำมันงาและเกลือ",i:"สาหร่ายแห้ง, น้ำมันงา/งาขี้ม้อน, เกลือ"},
+ vi:{n:"Rong biển nướng (Gim)",d:"Lá rong biển giòn nướng với dầu mè và muối.",i:"Rong biển khô, dầu mè/tía tô, muối"},
+ fr:{n:"Algue grillée (Gim)",d:"Feuilles d'algue séchée grillées à l'huile de sésame et au sel.",i:"Algue séchée, huile de sésame/périlla, sel"},
+ es:{n:"Alga tostada (Gim)",d:"Láminas de alga seca tostadas con aceite de sésamo y sal.",i:"Alga seca, aceite de sésamo/perilla, sal"}}},
+geotjeori:{icon:"🥬",tags:["spicy"],t:{
+ ko:{n:"배추겉절이",d:"갓 버무린 아삭한 겉절이 김치.",i:"배추, 고춧가루, 마늘, 액젓, 파, 설탕"},
+ en:{n:"Fresh Kimchi (Geotjeori)",d:"Crisp, freshly-made napa cabbage kimchi, eaten unfermented.",i:"Napa cabbage, chili flakes, garlic, fish sauce, scallion, sugar"},
+ th:{n:"กิมจิสด (คอทจอรี)",d:"กิมจิผักกาดขาวทำสดๆ กรอบ ไม่ผ่านการหมัก",i:"ผักกาดขาว, พริกป่น, กระเทียม, น้ำปลา, ต้นหอม, น้ำตาล"},
+ vi:{n:"Kim chi tươi (Geotjeori)",d:"Kim chi cải thảo làm tươi, giòn, ăn ngay không ủ.",i:"Cải thảo, ớt bột, tỏi, nước mắm, hành lá, đường"},
+ fr:{n:"Kimchi frais (Geotjeori)",d:"Kimchi de chou croquant, préparé du jour, non fermenté.",i:"Chou chinois, piment, ail, sauce de poisson, oignon vert, sucre"},
+ es:{n:"Kimchi fresco (Geotjeori)",d:"Kimchi de col crujiente, recién hecho, sin fermentar.",i:"Col china, chile, ajo, salsa de pescado, cebolleta, azúcar"}}},
+myeongi_kimchi:{icon:"🌿",tags:["veg"],t:{
+ ko:{n:"명이(산마늘)김치",d:"향긋한 산마늘 잎을 간장에 절인 장아찌형 김치.",i:"명이(산마늘), 간장, 식초, 설탕, 마늘"},
+ en:{n:"Wild Garlic Kimchi",d:"Fragrant wild-garlic leaves pickled in a soy-vinegar sauce.",i:"Wild garlic (myeongi) leaves, soy sauce, vinegar, sugar, garlic"},
+ th:{n:"กิมจิกระเทียมป่า",d:"ใบกระเทียมป่าหอม ดองในซอสซีอิ๊วน้ำส้ม",i:"ใบกระเทียมป่า, ซีอิ๊ว, น้ำส้ม, น้ำตาล, กระเทียม"},
+ vi:{n:"Kim chi tỏi rừng",d:"Lá tỏi rừng thơm ngâm nước tương pha giấm.",i:"Lá tỏi rừng (myeongi), nước tương, giấm, đường, tỏi"},
+ fr:{n:"Kimchi d'ail des ours",d:"Feuilles d'ail sauvage marinées dans une sauce soja-vinaigre.",i:"Ail sauvage (myeongi), sauce soja, vinaigre, sucre, ail"},
+ es:{n:"Kimchi de ajo silvestre",d:"Hojas de ajo silvestre encurtidas en salsa de soja y vinagre.",i:"Ajo silvestre (myeongi), salsa de soja, vinagre, azúcar, ajo"}}},
+bread_jam:{icon:"🍞",tags:["gluten","veg"],t:{
+ ko:{n:"발효빵 & 잼",d:"천천히 발효시킨 담백한 빵과 달콤한 과일 잼.",i:"밀가루, 천연 발효종, 물, 소금, 과일 잼"},
+ en:{n:"Sourdough Bread & Jam",d:"Slow-fermented artisan bread served with sweet fruit jam.",i:"Wheat flour, sourdough starter, water, salt, fruit jam"},
+ th:{n:"ขนมปังหมัก & แยม",d:"ขนมปังหมักธรรมชาติ เสิร์ฟกับแยมผลไม้หวาน",i:"แป้งสาลี, หัวเชื้อหมัก, น้ำ, เกลือ, แยมผลไม้"},
+ vi:{n:"Bánh mì lên men & mứt",d:"Bánh mì men tự nhiên ăn kèm mứt trái cây ngọt.",i:"Bột mì, men tự nhiên, nước, muối, mứt trái cây"},
+ fr:{n:"Pain au levain & confiture",d:"Pain artisanal à fermentation lente avec confiture de fruits.",i:"Farine de blé, levain, eau, sel, confiture"},
+ es:{n:"Pan de masa madre & mermelada",d:"Pan artesanal de fermentación lenta con mermelada de fruta.",i:"Harina de trigo, masa madre, agua, sal, mermelada"}}},
+tomato_marinade:{icon:"🍅",tags:["veg"],t:{
+ ko:{n:"토마토 마리네이드",d:"토마토를 올리브유와 허브에 절인 상큼한 냉채.",i:"토마토, 올리브유, 식초, 허브, 소금, 후추"},
+ en:{n:"Marinated Tomatoes",d:"Fresh tomatoes marinated in olive oil, herbs and vinegar.",i:"Tomato, olive oil, vinegar, herbs, salt, pepper"},
+ th:{n:"มะเขือเทศหมัก",d:"มะเขือเทศสดหมักน้ำมันมะกอกและสมุนไพร",i:"มะเขือเทศ, น้ำมันมะกอก, น้ำส้ม, สมุนไพร, เกลือ, พริกไทย"},
+ vi:{n:"Cà chua ướp",d:"Cà chua tươi ướp dầu ô liu, thảo mộc và giấm.",i:"Cà chua, dầu ô liu, giấm, thảo mộc, muối, tiêu"},
+ fr:{n:"Tomates marinées",d:"Tomates fraîches marinées à l'huile d'olive et aux herbes.",i:"Tomate, huile d'olive, vinaigre, herbes, sel, poivre"},
+ es:{n:"Tomates marinados",d:"Tomates frescos marinados en aceite de oliva y hierbas.",i:"Tomate, aceite de oliva, vinagre, hierbas, sal, pimienta"}}},
+donkatsu:{icon:"🍖",tags:["pork","gluten","egg"],t:{
+ ko:{n:"돈까스 (탕수육소스)",d:"바삭하게 튀긴 돼지고기 커틀릿에 새콤달콤 소스.",i:"돼지고기, 빵가루, 계란, 밀가루, 새콤달콤 소스"},
+ en:{n:"Pork Cutlet (Sweet-Sour)",d:"Crispy breaded, deep-fried pork cutlet with sweet-and-sour sauce.",i:"Pork, breadcrumbs, egg, wheat flour, sweet-&-sour sauce"},
+ th:{n:"หมูชุบเกล็ดทอด (ซอสเปรี้ยวหวาน)",d:"หมูชุบเกล็ดขนมปังทอดกรอบ ราดซอสเปรี้ยวหวาน",i:"หมู, เกล็ดขนมปัง, ไข่, แป้งสาลี, ซอสเปรี้ยวหวาน"},
+ vi:{n:"Thịt heo chiên xù (sốt chua ngọt)",d:"Thịt heo tẩm bột chiên giòn, rưới sốt chua ngọt.",i:"Thịt heo, vụn bánh mì, trứng, bột mì, sốt chua ngọt"},
+ fr:{n:"Escalope de porc panée (aigre-douce)",d:"Porc pané et frit, croustillant, sauce aigre-douce.",i:"Porc, chapelure, œuf, farine, sauce aigre-douce"},
+ es:{n:"Milanesa de cerdo (agridulce)",d:"Chuleta de cerdo empanada y frita con salsa agridulce.",i:"Cerdo, pan rallado, huevo, harina, salsa agridulce"}}},
+cabbage_cucumber_salad:{icon:"🥗",tags:["veg"],t:{
+ ko:{n:"양배추오이샐러드 (유자소스)",d:"아삭한 양배추·오이에 상큼한 유자 드레싱.",i:"양배추, 오이, 유자청, 식초, 올리브유"},
+ en:{n:"Cabbage-Cucumber Salad (Yuzu)",d:"Crunchy cabbage and cucumber with a zesty yuzu-citron dressing.",i:"Cabbage, cucumber, yuzu (citron), vinegar, olive oil"},
+ th:{n:"สลัดกะหล่ำแตงกวา (ซอสยูซุ)",d:"กะหล่ำและแตงกวากรอบ ราดน้ำสลัดยูซุหอมสดชื่น",i:"กะหล่ำปลี, แตงกวา, ยูซุ, น้ำส้ม, น้ำมันมะกอก"},
+ vi:{n:"Salad bắp cải dưa leo (yuzu)",d:"Bắp cải và dưa leo giòn với sốt thanh yên yuzu.",i:"Bắp cải, dưa leo, yuzu (thanh yên), giấm, dầu ô liu"},
+ fr:{n:"Salade chou-concombre (yuzu)",d:"Chou et concombre croquants, vinaigrette au yuzu.",i:"Chou, concombre, yuzu (cédrat), vinaigre, huile d'olive"},
+ es:{n:"Ensalada col-pepino (yuzu)",d:"Col y pepino crujientes con aderezo cítrico de yuzu.",i:"Col, pepino, yuzu (cidra), vinagre, aceite de oliva"}}},
+cheese:{icon:"🧀",tags:["dairy","veg"],t:{
+ ko:{n:"치즈",d:"부드럽고 고소한 슬라이스 치즈.",i:"우유, 발효 배양균, 소금"},
+ en:{n:"Cheese",d:"Mild, creamy sliced cheese.",i:"Milk, cultures, salt"},
+ th:{n:"ชีส",d:"ชีสแผ่นเนื้อนุ่ม รสมันกลมกล่อม",i:"นม, จุลินทรีย์, เกลือ"},
+ vi:{n:"Phô mai",d:"Phô mai lát béo, vị dịu.",i:"Sữa, men vi sinh, muối"},
+ fr:{n:"Fromage",d:"Fromage en tranches, doux et crémeux.",i:"Lait, ferments, sel"},
+ es:{n:"Queso",d:"Queso en lonchas, suave y cremoso.",i:"Leche, cultivos, sal"}}},
+dak_gomtang:{icon:"🍲",tags:["chicken"],t:{
+ ko:{n:"닭곰탕",d:"닭을 오래 고아 만든 뽀얗고 담백한 국.",i:"닭고기, 대파, 마늘, 소금, 후추"},
+ en:{n:"Chicken Bone Soup",d:"Milky, clean-tasting broth from long-simmered chicken.",i:"Chicken, leek, garlic, salt, pepper"},
+ th:{n:"ซุปกระดูกไก่",d:"น้ำซุปไก่เคี่ยวนาน สีขาวขุ่น รสกลมกล่อม",i:"ไก่, ต้นกระเทียม, กระเทียม, เกลือ, พริกไทย"},
+ vi:{n:"Súp gà hầm xương",d:"Nước dùng gà hầm lâu, trắng đục, vị thanh.",i:"Thịt gà, tỏi tây, tỏi, muối, tiêu"},
+ fr:{n:"Soupe de poulet mijotée",d:"Bouillon laiteux et léger de poulet longuement mijoté.",i:"Poulet, poireau, ail, sel, poivre"},
+ es:{n:"Sopa de pollo",d:"Caldo lechoso y suave de pollo cocido a fuego lento.",i:"Pollo, puerro, ajo, sal, pimienta"}}},
+sam_namul:{icon:"🌿",tags:["veg"],t:{
+ ko:{n:"삼나물(눈개승마)",d:"쫄깃한 산나물을 참기름에 무친 나물.",i:"삼나물(눈개승마), 참기름, 간장, 마늘, 깨"},
+ en:{n:"Goat's-Beard Herb (Sam-namul)",d:"Chewy Korean mountain herb seasoned with sesame oil.",i:"Goat's-beard herb, sesame oil, soy sauce, garlic, sesame seeds"},
+ th:{n:"ผักภูเขาซัมนามุล",d:"ผักภูเขาเกาหลีเนื้อหนึบ คลุกน้ำมันงา",i:"ผักซัมนามุล, น้ำมันงา, ซีอิ๊ว, กระเทียม, งา"},
+ vi:{n:"Rau núi Sam-namul",d:"Rau núi Hàn Quốc dai, trộn dầu mè.",i:"Rau sam-namul, dầu mè, nước tương, tỏi, mè"},
+ fr:{n:"Herbe de montagne (Sam-namul)",d:"Herbe de montagne coréenne, ferme, assaisonnée au sésame.",i:"Herbe sam-namul, huile de sésame, sauce soja, ail, sésame"},
+ es:{n:"Hierba de montaña (Sam-namul)",d:"Hierba de montaña coreana, firme, aliñada con sésamo.",i:"Hierba sam-namul, aceite de sésamo, salsa de soja, ajo, sésamo"}}},
+squid_muchim:{icon:"🦑",tags:["seafood","spicy"],t:{
+ ko:{n:"오징어야채무침",d:"오징어와 무·오이를 매콤새콤하게 무친 요리.",i:"오징어, 무, 오이, 고추장, 식초, 설탕"},
+ en:{n:"Spicy Squid Salad",d:"Squid tossed with radish & cucumber in a sweet-spicy sauce.",i:"Squid, radish, cucumber, gochujang, vinegar, sugar"},
+ th:{n:"ยำปลาหมึก",d:"ปลาหมึกยำกับหัวไชเท้าและแตงกวา รสเปรี้ยวเผ็ด",i:"ปลาหมึก, หัวไชเท้า, แตงกวา, พริกเกาหลี, น้ำส้ม, น้ำตาล"},
+ vi:{n:"Mực trộn cay",d:"Mực trộn củ cải và dưa leo với sốt chua cay ngọt.",i:"Mực, củ cải, dưa leo, tương ớt, giấm, đường"},
+ fr:{n:"Salade de calmar épicée",d:"Calmar mélangé au radis et concombre, sauce aigre-épicée.",i:"Calmar, radis, concombre, gochujang, vinaigre, sucre"},
+ es:{n:"Ensalada de calamar picante",d:"Calamar con rábano y pepino en salsa agridulce y picante.",i:"Calamar, rábano, pepino, gochujang, vinagre, azúcar"}}},
+yeolmu_kimchi:{icon:"🥬",tags:["spicy"],t:{
+ ko:{n:"열무김치",d:"여린 무청으로 담근 아삭하고 시원한 김치.",i:"열무(어린 무청), 고춧가루, 마늘, 액젓, 파"},
+ en:{n:"Young Radish Kimchi",d:"Crisp, refreshing kimchi made from tender young radish greens.",i:"Young radish greens, chili flakes, garlic, fish sauce, scallion"},
+ th:{n:"กิมจิผักกาดหัวอ่อน",d:"กิมจิกรอบสดชื่นจากยอดหัวไชเท้าอ่อน",i:"ยอดหัวไชเท้าอ่อน, พริกป่น, กระเทียม, น้ำปลา, ต้นหอม"},
+ vi:{n:"Kim chi củ cải non",d:"Kim chi giòn mát từ lá củ cải non.",i:"Lá củ cải non, ớt bột, tỏi, nước mắm, hành lá"},
+ fr:{n:"Kimchi de radis jeune",d:"Kimchi croquant et frais aux jeunes fanes de radis.",i:"Fanes de radis jeune, piment, ail, sauce de poisson, oignon vert"},
+ es:{n:"Kimchi de rábano tierno",d:"Kimchi crujiente y fresco de hojas de rábano tierno.",i:"Hojas de rábano tierno, chile, ajo, salsa de pescado, cebolleta"}}},
+gomtang:{icon:"🍲",tags:["beef"],t:{
+ ko:{n:"곰탕",d:"소뼈와 고기를 오래 끓인 진하고 담백한 국.",i:"소고기, 소뼈, 대파, 마늘, 소금"},
+ en:{n:"Beef Bone Soup (Gomtang)",d:"Rich yet clean broth from beef and bones simmered for hours.",i:"Beef, beef bones, leek, garlic, salt"},
+ th:{n:"ซุปกระดูกวัว (กมทัง)",d:"น้ำซุปเนื้อและกระดูกวัวเคี่ยวนาน เข้มข้นแต่กลมกล่อม",i:"เนื้อวัว, กระดูกวัว, ต้นกระเทียม, กระเทียม, เกลือ"},
+ vi:{n:"Súp xương bò (Gomtang)",d:"Nước dùng bò và xương hầm nhiều giờ, đậm mà thanh.",i:"Thịt bò, xương bò, tỏi tây, tỏi, muối"},
+ fr:{n:"Soupe d'os de bœuf (Gomtang)",d:"Bouillon riche et clair de bœuf et d'os longuement mijotés.",i:"Bœuf, os de bœuf, poireau, ail, sel"},
+ es:{n:"Sopa de hueso de res (Gomtang)",d:"Caldo denso y limpio de res y huesos cocidos por horas.",i:"Res, huesos de res, puerro, ajo, sal"}}},
+gaji_bokkeum:{icon:"🍆",tags:["veg"],t:{
+ ko:{n:"가지볶음",d:"부드러운 가지를 간장 양념에 볶은 반찬.",i:"가지, 간장, 마늘, 파, 참기름, 고추"},
+ en:{n:"Stir-fried Eggplant",d:"Tender eggplant stir-fried in a garlicky soy sauce.",i:"Eggplant, soy sauce, garlic, scallion, sesame oil, chili"},
+ th:{n:"มะเขือม่วงผัด",d:"มะเขือม่วงนุ่มผัดซีอิ๊วกระเทียม",i:"มะเขือม่วง, ซีอิ๊ว, กระเทียม, ต้นหอม, น้ำมันงา, พริก"},
+ vi:{n:"Cà tím xào",d:"Cà tím mềm xào nước tương tỏi.",i:"Cà tím, nước tương, tỏi, hành lá, dầu mè, ớt"},
+ fr:{n:"Aubergine sautée",d:"Aubergine tendre sautée à la sauce soja et à l'ail.",i:"Aubergine, sauce soja, ail, oignon vert, huile de sésame, piment"},
+ es:{n:"Berenjena salteada",d:"Berenjena tierna salteada en salsa de soja con ajo.",i:"Berenjena, salsa de soja, ajo, cebolleta, aceite de sésamo, chile"}}},
+daegu_jeon:{icon:"🐟",tags:["fish","egg","gluten"],t:{
+ ko:{n:"대구전",d:"대구살에 밀가루·계란옷을 입혀 부친 담백한 전.",i:"대구살, 계란, 밀가루, 소금, 식용유"},
+ en:{n:"Pan-fried Cod (Daegu-jeon)",d:"Mild cod fillets coated in flour and egg, pan-fried golden.",i:"Cod fillet, egg, wheat flour, salt, cooking oil"},
+ th:{n:"ปลาค็อดชุบไข่ทอด",d:"เนื้อปลาค็อดชุบแป้งและไข่ ทอดเหลืองหอม",i:"เนื้อปลาค็อด, ไข่, แป้งสาลี, เกลือ, น้ำมัน"},
+ vi:{n:"Cá tuyết chiên trứng",d:"Phi lê cá tuyết áo bột và trứng, chiên vàng.",i:"Cá tuyết, trứng, bột mì, muối, dầu ăn"},
+ fr:{n:"Cabillaud poêlé (Daegu-jeon)",d:"Filets de cabillaud enrobés de farine et d'œuf, poêlés.",i:"Filet de cabillaud, œuf, farine, sel, huile"},
+ es:{n:"Bacalao a la plancha (Daegu-jeon)",d:"Filetes de bacalao rebozados en harina y huevo, dorados.",i:"Filete de bacalao, huevo, harina, sal, aceite"}}},
+kkakdugi:{icon:"🥬",tags:["spicy"],t:{
+ ko:{n:"깍두기",d:"무를 깍둑 썰어 담근 아삭한 무김치.",i:"무, 고춧가루, 마늘, 생강, 액젓, 설탕"},
+ en:{n:"Cubed Radish Kimchi",d:"Crunchy kimchi made of bite-size cubes of radish.",i:"Radish, chili flakes, garlic, ginger, fish sauce, sugar"},
+ th:{n:"กักดูกี (กิมจิหัวไชเท้า)",d:"กิมจิหัวไชเท้าหั่นเต๋า กรอบอร่อย",i:"หัวไชเท้า, พริกป่น, กระเทียม, ขิง, น้ำปลา, น้ำตาล"},
+ vi:{n:"Kim chi củ cải (Kkakdugi)",d:"Kim chi củ cải cắt vuông, giòn ngon.",i:"Củ cải, ớt bột, tỏi, gừng, nước mắm, đường"},
+ fr:{n:"Kimchi de radis en dés",d:"Kimchi croquant fait de dés de radis.",i:"Radis, piment, ail, gingembre, sauce de poisson, sucre"},
+ es:{n:"Kimchi de rábano en cubos",d:"Kimchi crujiente de rábano cortado en dados.",i:"Rábano, chile, ajo, jengibre, salsa de pescado, azúcar"}}},
+oi_miyeok_naengguk:{icon:"🥣",tags:["veg"],t:{
+ ko:{n:"오이미역냉국",d:"새콤한 국물에 오이와 미역을 넣은 시원한 냉국.",i:"미역, 오이, 식초, 간장, 설탕, 물"},
+ en:{n:"Cold Cucumber-Seaweed Soup",d:"Chilled, tangy soup with cucumber and seaweed—refreshing in summer.",i:"Seaweed, cucumber, vinegar, soy sauce, sugar, water"},
+ th:{n:"ซุปเย็นแตงกวาสาหร่าย",d:"ซุปเย็นรสเปรี้ยว ใส่แตงกวาและสาหร่าย สดชื่น",i:"สาหร่าย, แตงกวา, น้ำส้ม, ซีอิ๊ว, น้ำตาล, น้ำ"},
+ vi:{n:"Canh lạnh dưa leo rong biển",d:"Canh lạnh chua nhẹ với dưa leo và rong biển, mát mẻ.",i:"Rong biển, dưa leo, giấm, nước tương, đường, nước"},
+ fr:{n:"Soupe froide concombre-algue",d:"Soupe froide et acidulée au concombre et à l'algue.",i:"Algue, concombre, vinaigre, sauce soja, sucre, eau"},
+ es:{n:"Sopa fría de pepino y alga",d:"Sopa fría y ácida con pepino y alga, muy refrescante.",i:"Alga, pepino, vinagre, salsa de soja, azúcar, agua"}}},
+bibimbap:{icon:"🍚",tags:["beef","egg","spicy"],t:{
+ ko:{n:"비빔밥",d:"밥 위에 나물·소고기·계란을 올려 고추장에 비벼 먹는 대표 한식.",i:"밥, 소고기, 버섯, 호박, 양파, 당근, 콩나물, 김치, 계란, 고추장, 참기름"},
+ en:{n:"Bibimbap",d:"Korea's iconic mixed rice—veggies, beef and egg stirred with red-pepper paste.",i:"Rice, beef, mushroom, zucchini, onion, carrot, bean sprouts, kimchi, egg, gochujang, sesame oil"},
+ th:{n:"บิบิมบับ",d:"ข้าวยำเกาหลีชื่อดัง คลุกผัก เนื้อ ไข่ กับซอสพริกเกาหลี",i:"ข้าว, เนื้อวัว, เห็ด, ซูกินี, หัวหอม, แครอท, ถั่วงอก, กิมจิ, ไข่, ซอสพริกเกาหลี, น้ำมันงา"},
+ vi:{n:"Cơm trộn Bibimbap",d:"Cơm trộn Hàn Quốc nổi tiếng: rau, thịt bò, trứng và tương ớt.",i:"Cơm, thịt bò, nấm, bí ngòi, hành, cà rốt, giá đỗ, kim chi, trứng, tương ớt, dầu mè"},
+ fr:{n:"Bibimbap",d:"Riz mélangé emblématique: légumes, bœuf et œuf, pâte de piment.",i:"Riz, bœuf, champignon, courgette, oignon, carotte, germes de soja, kimchi, œuf, gochujang, huile de sésame"},
+ es:{n:"Bibimbap",d:"Arroz mixto icónico: verduras, ternera y huevo con pasta de chile.",i:"Arroz, ternera, champiñón, calabacín, cebolla, zanahoria, brotes de soja, kimchi, huevo, gochujang, aceite de sésamo"}}},
+bread_nutjam:{icon:"🍞",tags:["gluten","nuts","veg"],t:{
+ ko:{n:"발효빵 & 견과류잼",d:"담백한 발효빵에 고소한 견과류 잼을 곁들임.",i:"밀가루, 발효종, 견과류(땅콩·아몬드 등), 설탕, 소금"},
+ en:{n:"Sourdough & Nut Spread",d:"Artisan sourdough served with a rich nutty spread.",i:"Wheat flour, sourdough starter, nuts (peanut, almond…), sugar, salt"},
+ th:{n:"ขนมปังหมัก & แยมถั่ว",d:"ขนมปังหมักเสิร์ฟกับแยมถั่วรสมัน",i:"แป้งสาลี, หัวเชื้อหมัก, ถั่ว (ถั่วลิสง อัลมอนด์ ฯลฯ), น้ำตาล, เกลือ"},
+ vi:{n:"Bánh mì lên men & mứt hạt",d:"Bánh mì men tự nhiên ăn kèm mứt hạt béo bùi.",i:"Bột mì, men tự nhiên, các loại hạt (đậu phộng, hạnh nhân…), đường, muối"},
+ fr:{n:"Pain au levain & pâte de fruits à coque",d:"Pain artisanal avec une pâte à tartiner aux fruits à coque.",i:"Farine de blé, levain, fruits à coque (arachide, amande…), sucre, sel"},
+ es:{n:"Masa madre & crema de frutos secos",d:"Pan artesanal con una crema untable de frutos secos.",i:"Harina de trigo, masa madre, frutos secos (cacahuete, almendra…), azúcar, sal"}}},
+sausage_ketchup:{icon:"🌭",tags:["pork","gluten"],t:{
+ ko:{n:"소시지 & 케첩",d:"노릇하게 구운 소시지에 케첩을 곁들임.",i:"돼지고기 소시지, 케첩, 식용유, (밀 함유 가능)"},
+ en:{n:"Sausage & Ketchup",d:"Pan-seared sausages served with tomato ketchup.",i:"Pork sausage, ketchup, cooking oil, (may contain wheat)"},
+ th:{n:"ไส้กรอก & ซอสมะเขือเทศ",d:"ไส้กรอกทอดหอม เสิร์ฟกับซอสมะเขือเทศ",i:"ไส้กรอกหมู, ซอสมะเขือเทศ, น้ำมัน, (อาจมีแป้งสาลี)"},
+ vi:{n:"Xúc xích & tương cà",d:"Xúc xích áp chảo ăn kèm tương cà.",i:"Xúc xích heo, tương cà, dầu ăn, (có thể chứa lúa mì)"},
+ fr:{n:"Saucisse & ketchup",d:"Saucisses poêlées servies avec du ketchup.",i:"Saucisse de porc, ketchup, huile, (peut contenir du blé)"},
+ es:{n:"Salchicha & kétchup",d:"Salchichas doradas servidas con kétchup.",i:"Salchicha de cerdo, kétchup, aceite, (puede contener trigo)"}}},
+cabbage_salad:{icon:"🥗",tags:["veg","egg"],t:{
+ ko:{n:"양배추샐러드 (마요네즈)",d:"채 썬 양배추에 부드러운 마요네즈 드레싱.",i:"양배추, 마요네즈(계란), 소금, 후추"},
+ en:{n:"Cabbage Salad (Mayo)",d:"Shredded cabbage tossed in creamy mayonnaise dressing.",i:"Cabbage, mayonnaise (egg), salt, pepper"},
+ th:{n:"สลัดกะหล่ำ (มายองเนส)",d:"กะหล่ำปลีซอยคลุกน้ำสลัดมายองเนสเนื้อครีม",i:"กะหล่ำปลี, มายองเนส (ไข่), เกลือ, พริกไทย"},
+ vi:{n:"Salad bắp cải (sốt mayo)",d:"Bắp cải bào trộn sốt mayonnaise béo.",i:"Bắp cải, sốt mayonnaise (trứng), muối, tiêu"},
+ fr:{n:"Salade de chou (mayo)",d:"Chou émincé assaisonné d'une mayonnaise crémeuse.",i:"Chou, mayonnaise (œuf), sel, poivre"},
+ es:{n:"Ensalada de col (mayonesa)",d:"Col rallada con aderezo cremoso de mayonesa.",i:"Col, mayonesa (huevo), sal, pimienta"}}},
+oi_pickle:{icon:"🥒",tags:["veg"],t:{
+ ko:{n:"오이피클",d:"새콤달콤하게 절인 아삭한 오이 피클.",i:"오이, 식초, 설탕, 소금, 향신료"},
+ en:{n:"Cucumber Pickles",d:"Crunchy cucumber pickled in a sweet-and-sour brine.",i:"Cucumber, vinegar, sugar, salt, pickling spices"},
+ th:{n:"แตงกวาดอง",d:"แตงกวาดองเปรี้ยวหวาน กรอบอร่อย",i:"แตงกวา, น้ำส้ม, น้ำตาล, เกลือ, เครื่องเทศดอง"},
+ vi:{n:"Dưa leo muối chua",d:"Dưa leo ngâm chua ngọt, giòn.",i:"Dưa leo, giấm, đường, muối, gia vị ngâm"},
+ fr:{n:"Pickles de concombre",d:"Concombre croquant mariné dans une saumure aigre-douce.",i:"Concombre, vinaigre, sucre, sel, épices"},
+ es:{n:"Pepinillos",d:"Pepino crujiente encurtido en salmuera agridulce.",i:"Pepino, vinagre, azúcar, sal, especias"}}},
+godeungeo_gui:{icon:"🐟",tags:["fish"],t:{
+ ko:{n:"고등어구이",d:"기름진 고등어를 노릇하게 구운 담백한 생선구이.",i:"고등어, 소금, 식용유"},
+ en:{n:"Grilled Mackerel",d:"Rich, oily mackerel grilled until crisp and golden.",i:"Mackerel, salt, cooking oil"},
+ th:{n:"ปลาแมคเคอเรลย่าง",d:"ปลาแมคเคอเรลมันย่างจนกรอบเหลือง",i:"ปลาแมคเคอเรล, เกลือ, น้ำมัน"},
+ vi:{n:"Cá thu nướng",d:"Cá thu béo nướng giòn vàng.",i:"Cá thu, muối, dầu ăn"},
+ fr:{n:"Maquereau grillé",d:"Maquereau gras grillé jusqu'à être doré et croustillant.",i:"Maquereau, sel, huile"},
+ es:{n:"Caballa a la parrilla",d:"Caballa grasa asada hasta quedar dorada y crujiente.",i:"Caballa, sal, aceite"}}},
+don_ganjang_bulgogi:{icon:"🍖",tags:["pork"],t:{
+ ko:{n:"돈간장불고기",d:"간장 양념에 재운 돼지고기를 볶은 짭짤달콤한 불고기.",i:"돼지고기, 간장, 설탕, 마늘, 양파, 참기름"},
+ en:{n:"Soy-Marinated Pork Bulgogi",d:"Thin pork marinated in sweet soy sauce and stir-fried.",i:"Pork, soy sauce, sugar, garlic, onion, sesame oil"},
+ th:{n:"หมูบูลโกกิซีอิ๊ว",d:"หมูหมักซีอิ๊วหวานผัด รสเค็มหวานกลมกล่อม",i:"หมู, ซีอิ๊ว, น้ำตาล, กระเทียม, หัวหอม, น้ำมันงา"},
+ vi:{n:"Thịt heo Bulgogi nước tương",d:"Thịt heo thái mỏng ướp nước tương ngọt rồi xào.",i:"Thịt heo, nước tương, đường, tỏi, hành, dầu mè"},
+ fr:{n:"Bulgogi de porc au soja",d:"Fines tranches de porc marinées au soja sucré et sautées.",i:"Porc, sauce soja, sucre, ail, oignon, huile de sésame"},
+ es:{n:"Bulgogi de cerdo (soja)",d:"Cerdo en lonchas finas marinado en soja dulce y salteado.",i:"Cerdo, salsa de soja, azúcar, ajo, cebolla, aceite de sésamo"}}},
+myeongi_pickle:{icon:"🌿",tags:["veg"],t:{
+ ko:{n:"명이피클 & 아삭이고추",d:"산마늘 절임과 아삭한 고추를 쌈장과 함께.",i:"명이(산마늘), 아삭이고추, 식초, 간장, 설탕, 쌈장"},
+ en:{n:"Wild-Garlic Pickle & Peppers",d:"Pickled wild garlic and crunchy mild peppers with soybean paste.",i:"Wild garlic, mild pepper, vinegar, soy sauce, sugar, ssamjang"},
+ th:{n:"กระเทียมป่าดอง & พริกกรอบ",d:"กระเทียมป่าดองและพริกอ่อนกรอบ เสิร์ฟกับซัมจัง",i:"กระเทียมป่า, พริกอ่อน, น้ำส้ม, ซีอิ๊ว, น้ำตาล, ซัมจัง"},
+ vi:{n:"Tỏi rừng ngâm & ớt giòn",d:"Tỏi rừng ngâm và ớt dịu giòn, ăn kèm tương chấm.",i:"Tỏi rừng, ớt dịu, giấm, nước tương, đường, tương chấm"},
+ fr:{n:"Ail des ours mariné & piments",d:"Ail sauvage mariné et piments doux croquants avec pâte de soja.",i:"Ail sauvage, piment doux, vinaigre, sauce soja, sucre, ssamjang"},
+ es:{n:"Ajo silvestre & chiles",d:"Ajo silvestre encurtido y chiles suaves crujientes con pasta de soja.",i:"Ajo silvestre, chile suave, vinagre, salsa de soja, azúcar, ssamjang"}}},
+so_bulgogi:{icon:"🍖",tags:["beef"],t:{
+ ko:{n:"소불고기",d:"간장 양념에 재운 소고기를 채소와 볶은 대표 한식.",i:"소고기, 간장, 설탕, 마늘, 양파, 당근, 참기름"},
+ en:{n:"Beef Bulgogi",d:"Korea's classic—thin beef marinated in sweet soy and stir-fried with veggies.",i:"Beef, soy sauce, sugar, garlic, onion, carrot, sesame oil"},
+ th:{n:"เนื้อบูลโกกิ",d:"เมนูเกาหลีคลาสสิก เนื้อหมักซีอิ๊วหวานผัดกับผัก",i:"เนื้อวัว, ซีอิ๊ว, น้ำตาล, กระเทียม, หัวหอม, แครอท, น้ำมันงา"},
+ vi:{n:"Thịt bò Bulgogi",d:"Món Hàn kinh điển: bò thái mỏng ướp nước tương ngọt xào rau.",i:"Thịt bò, nước tương, đường, tỏi, hành, cà rốt, dầu mè"},
+ fr:{n:"Bulgogi de bœuf",d:"Le classique coréen: bœuf mariné au soja sucré, sauté aux légumes.",i:"Bœuf, sauce soja, sucre, ail, oignon, carotte, huile de sésame"},
+ es:{n:"Bulgogi de ternera",d:"El clásico coreano: ternera marinada en soja dulce salteada con verduras.",i:"Ternera, salsa de soja, azúcar, ajo, cebolla, zanahoria, aceite de sésamo"}}},
+bujigaengi_namul:{icon:"🌿",tags:["veg"],t:{
+ ko:{n:"부지깽이나물",d:"향이 좋은 산나물을 데쳐 참기름에 무친 나물.",i:"부지깽이나물(취나물류), 참기름, 간장, 마늘, 깨"},
+ en:{n:"Seasoned Mountain Herb",d:"Fragrant Korean mountain greens blanched and tossed with sesame oil.",i:"Mountain herb (chwinamul type), sesame oil, soy sauce, garlic, sesame"},
+ th:{n:"ผักภูเขาปรุงรส",d:"ผักภูเขาเกาหลีหอม ลวกแล้วคลุกน้ำมันงา",i:"ผักภูเขา, น้ำมันงา, ซีอิ๊ว, กระเทียม, งา"},
+ vi:{n:"Rau núi trộn",d:"Rau núi Hàn Quốc thơm, chần rồi trộn dầu mè.",i:"Rau núi, dầu mè, nước tương, tỏi, mè"},
+ fr:{n:"Herbe de montagne assaisonnée",d:"Légumes de montagne parfumés, blanchis et assaisonnés au sésame.",i:"Herbe de montagne, huile de sésame, sauce soja, ail, sésame"},
+ es:{n:"Hierba de montaña aliñada",d:"Verduras de montaña aromáticas, escaldadas y aliñadas con sésamo.",i:"Hierba de montaña, aceite de sésamo, salsa de soja, ajo, sésamo"}}},
+myeolchi_bokkeum:{icon:"🐟",tags:["fish"],t:{
+ ko:{n:"멸치볶음 & 구이김",d:"잔멸치를 달짝지근하게 볶은 밑반찬, 구이김 곁들임.",i:"잔멸치, 간장, 설탕, 물엿, 참기름, 구이김"},
+ en:{n:"Stir-fried Anchovies & Seaweed",d:"Tiny anchovies stir-fried sweet-savory, served with roasted seaweed.",i:"Small dried anchovies, soy sauce, sugar, syrup, sesame oil, seaweed"},
+ th:{n:"ปลาไส้ตันผัด & สาหร่าย",d:"ปลาไส้ตันตัวเล็กผัดหวานเค็ม เสิร์ฟกับสาหร่ายย่าง",i:"ปลาไส้ตันแห้ง, ซีอิ๊ว, น้ำตาล, น้ำเชื่อม, น้ำมันงา, สาหร่าย"},
+ vi:{n:"Cá cơm rim & rong biển",d:"Cá cơm nhỏ rim mặn ngọt, ăn kèm rong biển nướng.",i:"Cá cơm khô, nước tương, đường, mạch nha, dầu mè, rong biển"},
+ fr:{n:"Anchois sautés & algue",d:"Petits anchois sautés sucrés-salés, servis avec algue grillée.",i:"Petits anchois séchés, sauce soja, sucre, sirop, huile de sésame, algue"},
+ es:{n:"Anchoas salteadas & alga",d:"Anchoas pequeñas salteadas agridulces con alga tostada.",i:"Anchoas secas, salsa de soja, azúcar, sirope, aceite de sésamo, alga"}}},
+baechu_kimchi:{icon:"🥬",tags:["spicy"],t:{
+ ko:{n:"배추김치",d:"발효된 대표 김치, 감칠맛과 매콤함이 어우러짐.",i:"배추, 고춧가루, 마늘, 생강, 액젓, 파"},
+ en:{n:"Napa Cabbage Kimchi",d:"The classic fermented kimchi—savory, tangy and mildly spicy.",i:"Napa cabbage, chili flakes, garlic, ginger, fish sauce, scallion"},
+ th:{n:"กิมจิผักกาดขาว",d:"กิมจิหมักคลาสสิก รสกลมกล่อม เปรี้ยว เผ็ดเล็กน้อย",i:"ผักกาดขาว, พริกป่น, กระเทียม, ขิง, น้ำปลา, ต้นหอม"},
+ vi:{n:"Kim chi cải thảo",d:"Kim chi lên men kinh điển: đậm đà, chua nhẹ, hơi cay.",i:"Cải thảo, ớt bột, tỏi, gừng, nước mắm, hành lá"},
+ fr:{n:"Kimchi de chou chinois",d:"Le kimchi fermenté classique: savoureux, acidulé, légèrement épicé.",i:"Chou chinois, piment, ail, gingembre, sauce de poisson, oignon vert"},
+ es:{n:"Kimchi de col china",d:"El kimchi fermentado clásico: sabroso, ácido y algo picante.",i:"Col china, chile, ajo, jengibre, salsa de pescado, cebolleta"}}},
+kkori_ujok_tang:{icon:"🍲",tags:["beef"],t:{
+ ko:{n:"꼬리우족탕",d:"소꼬리와 우족을 푹 고아 만든 진한 보양 국.",i:"소꼬리, 우족, 대파, 마늘, 소금, 후추"},
+ en:{n:"Oxtail & Cow's-Foot Soup",d:"Hearty, collagen-rich broth from long-simmered oxtail and cow's feet.",i:"Oxtail, cow's foot, leek, garlic, salt, pepper"},
+ th:{n:"ซุปหางวัวและขาวัว",d:"น้ำซุปเข้มข้นอุดมคอลลาเจนจากหางและขาวัวเคี่ยวนาน",i:"หางวัว, ขาวัว, ต้นกระเทียม, กระเทียม, เกลือ, พริกไทย"},
+ vi:{n:"Súp đuôi & giò bò",d:"Nước dùng đậm, giàu collagen từ đuôi và giò bò hầm lâu.",i:"Đuôi bò, giò bò, tỏi tây, tỏi, muối, tiêu"},
+ fr:{n:"Soupe de queue et pied de bœuf",d:"Bouillon nourrissant, riche en collagène, longuement mijoté.",i:"Queue de bœuf, pied de bœuf, poireau, ail, sel, poivre"},
+ es:{n:"Sopa de rabo y pata de res",d:"Caldo sustancioso y rico en colágeno de rabo y pata cocidos por horas.",i:"Rabo de res, pata de res, puerro, ajo, sal, pimienta"}}},
+don_jangjorim:{icon:"🍖",tags:["pork"],t:{
+ ko:{n:"돈장조림",d:"돼지고기를 간장에 짭짤달콤하게 조린 밑반찬.",i:"돼지고기, 간장, 설탕, 마늘, 꽈리고추, 물엿"},
+ en:{n:"Soy-Braised Pork",d:"Pork braised in sweet soy sauce until tender and savory.",i:"Pork, soy sauce, sugar, garlic, small peppers, syrup"},
+ th:{n:"หมูตุ๋นซีอิ๊ว",d:"หมูตุ๋นซีอิ๊วรสเค็มหวานจนนุ่ม",i:"หมู, ซีอิ๊ว, น้ำตาล, กระเทียม, พริกหวานเล็ก, น้ำเชื่อม"},
+ vi:{n:"Thịt heo kho tương",d:"Thịt heo kho nước tương ngọt mặn đến khi mềm.",i:"Thịt heo, nước tương, đường, tỏi, ớt nhỏ, mạch nha"},
+ fr:{n:"Porc braisé au soja",d:"Porc braisé dans une sauce soja sucrée jusqu'à être tendre.",i:"Porc, sauce soja, sucre, ail, petits piments, sirop"},
+ es:{n:"Cerdo estofado en soja",d:"Cerdo estofado en salsa de soja dulce hasta quedar tierno.",i:"Cerdo, salsa de soja, azúcar, ajo, chiles pequeños, sirope"}}},
+broccoli:{icon:"🥦",tags:["veg"],t:{
+ ko:{n:"브로콜리 (들깨소스)",d:"데친 브로콜리에 고소한 들깨 소스를 곁들임.",i:"브로콜리, 들깨가루, 소금, 참기름"},
+ en:{n:"Broccoli (Perilla Sauce)",d:"Blanched broccoli dressed in a nutty roasted-perilla sauce.",i:"Broccoli, ground perilla seeds, salt, sesame oil"},
+ th:{n:"บรอกโคลี (ซอสงาขี้ม้อน)",d:"บรอกโคลีลวกราดซอสงาขี้ม้อนรสมัน",i:"บรอกโคลี, งาขี้ม้อนป่น, เกลือ, น้ำมันงา"},
+ vi:{n:"Bông cải xanh (sốt tía tô)",d:"Bông cải xanh chần rưới sốt hạt tía tô béo bùi.",i:"Bông cải xanh, bột hạt tía tô, muối, dầu mè"},
+ fr:{n:"Brocoli (sauce périlla)",d:"Brocoli blanchi nappé d'une sauce onctueuse au périlla.",i:"Brocoli, graines de périlla moulues, sel, huile de sésame"},
+ es:{n:"Brócoli (salsa de perilla)",d:"Brócoli escaldado con una salsa de semillas de perilla.",i:"Brócoli, semillas de perilla molidas, sal, aceite de sésamo"}}},
+beef_veg_stew:{icon:"🍲",tags:["beef"],t:{
+ ko:{n:"소고기야채스튜",d:"소고기와 채소를 뭉근히 끓인 든든한 스튜.",i:"소고기, 감자, 당근, 양파, 토마토, 육수"},
+ en:{n:"Beef & Vegetable Stew",d:"Hearty stew of beef and vegetables simmered until tender.",i:"Beef, potato, carrot, onion, tomato, broth"},
+ th:{n:"สตูว์เนื้อและผัก",d:"สตูว์เนื้อและผักเคี่ยวนุ่ม อิ่มท้อง",i:"เนื้อวัว, มันฝรั่ง, แครอท, หัวหอม, มะเขือเทศ, น้ำสต๊อก"},
+ vi:{n:"Bò hầm rau củ",d:"Món hầm bò và rau củ ninh mềm, no bụng.",i:"Thịt bò, khoai tây, cà rốt, hành, cà chua, nước dùng"},
+ fr:{n:"Ragoût de bœuf & légumes",d:"Ragoût réconfortant de bœuf et légumes mijotés.",i:"Bœuf, pomme de terre, carotte, oignon, tomate, bouillon"},
+ es:{n:"Estofado de res & verduras",d:"Estofado sustancioso de res y verduras cocidas a fuego lento.",i:"Res, papa, zanahoria, cebolla, tomate, caldo"}}},
+naejang_tang:{icon:"🍲",tags:["beef"],t:{
+ ko:{n:"내장탕 & 소고기미역국",d:"소 내장을 얼큰하게 끓인 탕, 또는 담백한 소고기 미역국.",i:"소 내장, 소고기, 미역, 대파, 마늘, 고춧가루"},
+ en:{n:"Beef Tripe Soup / Seaweed Soup",d:"Choice of spicy beef-tripe soup or mild beef & seaweed soup.",i:"Beef tripe/offal, beef, seaweed, leek, garlic, chili"},
+ th:{n:"ซุปเครื่องในวัว / ซุปสาหร่ายเนื้อ",d:"เลือกได้ระหว่างซุปเครื่องในวัวรสเผ็ด หรือซุปสาหร่ายเนื้อรสอ่อน",i:"เครื่องในวัว, เนื้อวัว, สาหร่าย, ต้นกระเทียม, กระเทียม, พริก"},
+ vi:{n:"Súp lòng bò / Súp rong biển bò",d:"Chọn súp lòng bò cay hoặc súp rong biển bò thanh nhẹ.",i:"Lòng bò, thịt bò, rong biển, tỏi tây, tỏi, ớt"},
+ fr:{n:"Soupe de tripes / d'algue au bœuf",d:"Au choix: soupe épicée de tripes de bœuf ou soupe douce bœuf-algue.",i:"Tripes de bœuf, bœuf, algue, poireau, ail, piment"},
+ es:{n:"Sopa de callos / de alga con res",d:"A elegir: sopa picante de callos de res o suave de res y alga.",i:"Callos de res, res, alga, puerro, ajo, chile"}}}
+};
+/* ====== 요일별 메뉴 구성 (사진 기준) ======
+   lunch/dinner 는 위 DISH 의 key 목록입니다. 빈 배열([])이면 '준비 중'으로 표시됩니다.
+   ※ 사진에서 7/25 점심과 7/30 은 일부만 보여, 보이는 항목만 넣었습니다. */
+const MENU = [
+  {date:"7/25", wd:"sat",
+    lunch:[],
+    dinner:["mul_kimchi","ohyang_jangyuk","gochu_ssamjang","oimuchim_gim","geotjeori","myeongi_kimchi"]},
+  {date:"7/26", wd:"sun",
+    lunch:["bread_jam","tomato_marinade","donkatsu","cabbage_cucumber_salad","cheese"],
+    dinner:["dak_gomtang","sam_namul","squid_muchim","gim","yeolmu_kimchi"]},
+  {date:"7/27", wd:"mon",
+    lunch:["gomtang","gaji_bokkeum","daegu_jeon","gim","kkakdugi"],
+    dinner:["oi_miyeok_naengguk","bibimbap"]},
+  {date:"7/28", wd:"tue",
+    lunch:["bread_nutjam","tomato_marinade","sausage_ketchup","cabbage_salad","oi_pickle"],
+    dinner:["mul_kimchi","godeungeo_gui","don_ganjang_bulgogi","myeongi_pickle","geotjeori"]},
+  {date:"7/29", wd:"wed",
+    lunch:["oi_miyeok_naengguk","so_bulgogi","bujigaengi_namul","myeolchi_bokkeum","baechu_kimchi"],
+    dinner:["kkori_ujok_tang","don_jangjorim","broccoli","gim","kkakdugi"]},
+  {date:"7/30", wd:"thu",
+    lunch:["bread_jam","beef_veg_stew"],
+    dinner:["naejang_tang","bujigaengi_namul","gim"]}
+];
+
+/* ====== 렌더링 & 상호작용 ====== */
+const cur = {lang:"ko"};
+const $ = id => document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function dish(k){return DISH[k];}
+function tr(k){const d=DISH[k];return (d.t[cur.lang]||d.t.en||d.t.ko);}
+function mealTitle(type){return type==="lunch"?UI.lunch[cur.lang]:UI.dinner[cur.lang];}
+
+function renderStatic(){
+  const L=cur.lang;
+  document.documentElement.lang=L;
+  $("title").textContent=UI.title[L];
+  $("subtitle").textContent=UI.subtitle[L];
+  $("greet-hello").textContent=UI.hello[L];
+  $("greet-msg").textContent=UI.greeting[L];
+  $("footer").textContent=UI.footer[L];
+}
+
+function renderTabs(){
+  const el=$("tabs"); el.innerHTML="";
+  LANGS.forEach(l=>{
+    const b=document.createElement("button");
+    b.className="tab"+(l===cur.lang?" active":"");
+    b.setAttribute("aria-pressed", l===cur.lang);
+    b.innerHTML='<span class="flag">'+UI.flag[l]+'</span><span>'+esc(UI.langName[l])+'</span>';
+    b.addEventListener("click",()=>setLang(l));
+    el.appendChild(b);
+  });
+}
+
+function mealPanel(di,type,keys){
+  const p=document.createElement("div");
+  p.className="meal "+type;
+  const icon = type==="lunch" ? "🌞" : "🌙";
+  let html='<div class="meal-head"><span class="m-icon">'+icon+'</span><span class="m-title">'+esc(mealTitle(type))+'</span></div>';
+  if(!keys || keys.length===0){
+    p.classList.add("tba");
+    html+='<div class="tba-txt">'+esc(UI.tba[cur.lang])+'</div>';
+    p.innerHTML=html;
+    return p;
+  }
+  html+='<ul class="dishes">';
+  keys.forEach(k=>{
+    const t=tr(k);
+    html+='<li><span class="d-ico">'+DISH[k].icon+'</span><span class="d-name">'+esc(t.n)+'</span></li>';
+  });
+  html+='</ul>';
+  html+='<div class="tap-hint">'+esc(UI.tapHint[cur.lang])+' ›</div>';
+  p.innerHTML=html;
+  p.classList.add("clickable");
+  p.setAttribute("role","button");
+  p.setAttribute("tabindex","0");
+  p.addEventListener("click",()=>openModal(di,type));
+  p.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openModal(di,type);}});
+  return p;
+}
+
+function renderDays(){
+  const root=$("days"); root.innerHTML="";
+  MENU.forEach((day,di)=>{
+    const card=document.createElement("div"); card.className="day";
+    const wd=UI.weekday[day.wd][cur.lang];
+    card.innerHTML='<div class="day-head"><span class="date">'+esc(day.date)+'</span><span class="wd">'+esc(wd)+'</span></div>';
+    const grid=document.createElement("div"); grid.className="meals";
+    grid.appendChild(mealPanel(di,"lunch",day.lunch));
+    grid.appendChild(mealPanel(di,"dinner",day.dinner));
+    card.appendChild(grid);
+    root.appendChild(card);
+  });
+}
+
+function openModal(di,type){
+  const L=cur.lang;
+  const day=MENU[di];
+  const keys = type==="lunch" ? day.lunch : day.dinner;
+  $("modal-title").textContent = day.date+"  ·  "+UI.weekday[day.wd][L]+"  ·  "+mealTitle(type);
+  const body=$("modal-body"); body.innerHTML="";
+  keys.forEach(k=>{
+    const t=tr(k); const d=DISH[k];
+    const tags=d.tags.map(tg=>'<span class="tag">'+TAGICON[tg]+' '+esc(UI.tags[tg][L])+'</span>').join("");
+    const kor = (L==="ko") ? "" : '<div class="dish-kor">'+esc(DISH[k].t.ko.n)+'</div>';
+    body.innerHTML +=
+      '<div class="dish">'+
+        '<div class="dish-top"><span class="dish-ico">'+d.icon+'</span>'+
+          '<div><div class="dish-name">'+esc(t.n)+'</div>'+kor+'</div>'+
+        '</div>'+
+        (tags?'<div class="dish-tags">'+tags+'</div>':'')+
+        '<div class="dish-desc">'+esc(t.d)+'</div>'+
+        '<div class="dish-ing"><span class="ing-label">'+esc(UI.ingredients[L])+'</span>'+esc(t.i)+'</div>'+
+      '</div>';
+  });
+  const m=$("modal"); m.classList.add("open"); document.body.style.overflow="hidden";
+}
+function closeModal(){$("modal").classList.remove("open"); document.body.style.overflow="";}
+
+function setLang(l){
+  cur.lang=l;
+  renderStatic(); renderTabs(); renderDays();
+  const g=$("greeting");
+  if(g) g.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* init */
+renderStatic(); renderTabs(); renderDays();
+$("modal-close").addEventListener("click",closeModal);
+$("modal").addEventListener("click",e=>{ if(e.target.id==="modal") closeModal(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeModal(); });
+</script>
+</body>
+</html>
